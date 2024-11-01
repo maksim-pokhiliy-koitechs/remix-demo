@@ -26,7 +26,7 @@ export const AppInput = ({name, helperText, children, slotProps, ...props}: AppI
         <TextField
           error={!!fieldState.error}
           id={'input-' + field.name}
-          value={field.value}
+          value={field.value ?? ''}
           onChange={field.onChange}
           onBlur={field.onBlur}
           inputRef={field.ref}
