@@ -2,7 +2,7 @@ import type {MetaFunction} from '@remix-run/node';
 import {ClientLoaderFunctionArgs, Form, redirect, useLoaderData} from '@remix-run/react';
 import {useForm, FormProvider} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {useSnackbar} from 'notistack';
+import {useSnackbar, VariantType} from 'notistack';
 import * as yup from 'yup';
 import {useTranslation} from 'react-i18next';
 
@@ -81,13 +81,13 @@ export default function ProductsCreate() {
     const response = await mutate.mutateAsync({id: item.productId, payload});
 
     if (response?.errors?.length) {
-      enqueueSnackbar({
-        heading: response?.meta?.message,
-        messages: response?.errors,
-        variant: 'error',
-      });
+      response.errors.forEach(error =>
+        enqueueSnackbar(error, {
+          variant: 'error' as VariantType,
+        }),
+      );
     } else if (response?.result?.productId) {
-      enqueueSnackbar({messages: response.meta?.message, variant: 'success'});
+      enqueueSnackbar(response.meta?.message, {variant: 'success' as VariantType});
       navigate('/products', {viewTransition: true});
     }
   });

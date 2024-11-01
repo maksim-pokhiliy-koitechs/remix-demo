@@ -80,7 +80,7 @@ const handleBotRequest = (
           responseHeaders.set('Content-Type', 'text/html');
 
           resolve(
-            new Response(bodyWithStyles as any, {
+            new Response(bodyWithStyles as unknown as BodyInit, {
               headers: responseHeaders,
               status: didError ? 500 : responseStatusCode,
             }),

@@ -2,21 +2,16 @@ import type {MetaFunction} from '@remix-run/node';
 import {ClientLoaderFunctionArgs, Form, redirect, useLoaderData} from '@remix-run/react';
 import {useForm, FormProvider} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {useMutation} from '@tanstack/react-query';
 import {useTranslation} from 'react-i18next';
-import {useSnackbar} from 'notistack';
+import {useSnackbar, VariantType} from 'notistack';
 import * as yup from 'yup';
-
-import {Box} from '@mui/material';
 
 import {queryClient} from '~/services/client';
 import {useMutationCategoriesUpdate, useQueryCategoriesGet} from '~/services/categories';
 
 import {useI18nNavigate} from '~/global/hooks/use-i18n-navigate';
 
-import {AppInputSwitch} from '~/global/components/app-input-switch';
 import {PageShell} from '~/global/components/page-shell';
-import {AppInput} from '~/global/components/app-input';
 
 import {CategoriesForm} from './components/form';
 
@@ -76,13 +71,13 @@ export default function CategoriesCreate() {
     const response = await mutate.mutateAsync({id: current.categoryId, payload});
 
     if (response?.errors?.length) {
-      enqueueSnackbar({
-        heading: response?.meta?.message,
-        messages: response?.errors,
-        variant: 'error',
+      response.errors.forEach(error => {
+        enqueueSnackbar(error || 'An error occurred', {
+          variant: 'error' as VariantType,
+        });
       });
     } else if (response?.result?.categoryId) {
-      enqueueSnackbar({messages: response.meta?.message, variant: 'success'});
+      enqueueSnackbar(response.meta?.message, {variant: 'success' as VariantType});
       navigate('/categories', {viewTransition: true});
     }
   });

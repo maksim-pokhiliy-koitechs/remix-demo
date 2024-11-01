@@ -10,6 +10,6 @@ export const useToggle = (defaultValue: boolean = false) => {
     value,
     toggle: () => setValue(v => !v),
     setValue: (val: boolean) => setValue(val),
-    preventEventDefault: (event: any) => event?.preventDefault?.(),
+    preventEventDefault: (event: React.MouseEvent) => event?.preventDefault?.(),
   };
 };

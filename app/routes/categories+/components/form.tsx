@@ -1,4 +1,5 @@
 import {Box} from '@mui/material';
+import {useTranslation} from 'react-i18next';
 
 import {AppInput} from '~/global/components/app-input';
 import {AppInputSwitch} from '~/global/components/app-input-switch';
@@ -7,7 +8,7 @@ import {AppInputSwitch} from '~/global/components/app-input-switch';
 //
 
 export const CategoriesForm = () => {
-  // const {t} = useTranslation(['common', 'categories']);
+  const {t} = useTranslation(['common', 'categories']);
 
   return (
     <>

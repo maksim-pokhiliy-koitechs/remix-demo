@@ -15,12 +15,13 @@ import theme from '~/global/components/mui/theme';
 import {EmotionStyleContext} from '~/emotion/style-context';
 import {clientLoader as RootClientLoader} from '~/root';
 
-//
-//
-
 interface DocumentProps {
   children: React.ReactNode;
   title?: string;
+}
+
+interface ExtendedEmotionCacheSheet {
+  _insertTag: (tag: HTMLStyleElement) => void;
 }
 
 export const MuiDocument = withEmotionCache(({children, title}: DocumentProps, emotionCache) => {
@@ -35,9 +36,11 @@ export const MuiDocument = withEmotionCache(({children, title}: DocumentProps, e
     emotionCache.sheet.container = document.head;
     // re-inject tags
     const tags = emotionCache.sheet.tags;
+    const sheetWithInsertTag = emotionCache.sheet as unknown as ExtendedEmotionCacheSheet;
+
     emotionCache.sheet.flush();
     tags.forEach(tag => {
-      (emotionCache.sheet as any)._insertTag(tag);
+      sheetWithInsertTag._insertTag(tag);
     });
     // reset cache to reapply global styles
     clientStyleData.reset();

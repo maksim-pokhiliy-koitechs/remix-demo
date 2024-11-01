@@ -1,12 +1,14 @@
 import type {MetaFunction} from '@remix-run/node';
-import {Form, redirect, useNavigate} from '@remix-run/react';
+import {Form, redirect} from '@remix-run/react';
 import {useTranslation} from 'react-i18next';
-import {useSnackbar} from 'notistack';
+import {useSnackbar, VariantType} from 'notistack';
 import * as yup from 'yup';
 import {useForm, FormProvider} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 
 import {useMutationSignIn} from '~/services/auth';
+
+import {useI18nNavigate} from '~/global/hooks/use-i18n-navigate';
 
 import {PageShell} from '~/global/components/page-shell';
 import {AppInputPassword} from '~/global/components/app-input-password';
@@ -40,7 +42,7 @@ export default function SignIn() {
   const {t} = useTranslation(handle.i18n);
   const {enqueueSnackbar} = useSnackbar();
   const mutate = useMutationSignIn();
-  const navigate = useNavigate();
+  const navigate = useI18nNavigate();
 
   const form = useForm({
     mode: 'onChange',
@@ -54,16 +56,14 @@ export default function SignIn() {
     const response = await mutate.mutateAsync({payload});
 
     if (response?.errors?.length) {
-      enqueueSnackbar({
-        heading: response?.meta?.message,
-        messages: response?.errors,
-        variant: 'error',
+      response.errors.forEach(error => {
+        enqueueSnackbar(error || 'An error occurred', {
+          variant: 'error' as VariantType,
+        });
       });
     } else if (response?.result?.accessToken?.token) {
-      enqueueSnackbar({
-        heading: 'Signed in successfully',
-        messages: `Welcome back, ${response.result.user?.name}`,
-        variant: 'success',
+      enqueueSnackbar('Signed in successfully', {
+        variant: 'success' as VariantType,
       });
       apiSaveTokens(response);
       navigate('/', {replace: true, viewTransition: true});
