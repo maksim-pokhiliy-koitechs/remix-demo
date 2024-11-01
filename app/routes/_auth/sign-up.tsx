@@ -1,7 +1,7 @@
 import type {MetaFunction} from '@remix-run/node';
 import {Form, redirect} from '@remix-run/react';
 import {useTranslation} from 'react-i18next';
-import {useSnackbar} from 'notistack';
+import {useSnackbar, VariantType} from 'notistack';
 import * as yup from 'yup';
 import {useForm, FormProvider} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
@@ -61,16 +61,14 @@ export default function SignUp() {
     const response = await mutate.mutateAsync({payload});
 
     if (response?.errors?.length) {
-      enqueueSnackbar({
-        heading: response?.meta?.message,
-        messages: response?.errors,
-        variant: 'error',
+      response.errors.forEach(error => {
+        enqueueSnackbar(error || 'An error occurred', {
+          variant: 'error' as VariantType,
+        });
       });
     } else if (response?.result?.accessToken?.token) {
-      enqueueSnackbar({
-        heading: 'Account created successfully',
-        messages: `Welcome aboard, ${response.result.user?.name}`,
-        variant: 'success',
+      enqueueSnackbar('Account created successfully', {
+        variant: 'success' as VariantType,
       });
       apiSaveTokens(response);
       navigate('/', {replace: true, viewTransition: true});

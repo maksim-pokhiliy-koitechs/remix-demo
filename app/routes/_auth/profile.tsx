@@ -2,9 +2,8 @@ import type {MetaFunction} from '@remix-run/node';
 import {Form, redirect, useLoaderData} from '@remix-run/react';
 import {useForm, FormProvider} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {useMutation} from '@tanstack/react-query';
 import {useTranslation} from 'react-i18next';
-import {useSnackbar} from 'notistack';
+import {useSnackbar, VariantType} from 'notistack';
 import * as yup from 'yup';
 
 import {queryClient} from '~/services/client';
@@ -63,13 +62,15 @@ export default function Profile() {
     const response = await mutate.mutateAsync({payload});
 
     if (response?.errors?.length) {
-      enqueueSnackbar({
-        heading: response?.meta?.message,
-        messages: response?.errors,
-        variant: 'error',
+      response.errors.forEach(error => {
+        enqueueSnackbar(error || 'An error occurred', {
+          variant: 'error' as VariantType,
+        });
       });
     } else if (response?.result?.userId) {
-      enqueueSnackbar({messages: 'Profile updated successfully', variant: 'success'});
+      enqueueSnackbar('Profile updated successfully', {
+        variant: 'success' as VariantType,
+      });
     }
   });
 
